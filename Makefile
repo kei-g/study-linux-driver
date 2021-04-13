@@ -1,12 +1,12 @@
 BUILD_DIR := /lib/modules/$(shell uname -r)/build
-CFILES := test1.c test2.c
+CFILES := study-exit.c study-init.c
 CUR_DIR := $(shell pwd)
 MAKE := make -C $(BUILD_DIR) M=$(CUR_DIR)
 
 ccflags-y += -Ofast -Wall -Werror -Wno-declaration-after-statement
 ccflags-y += -march=native -std=gnu2x
-obj-m := test.o
-test-objs := $(CFILES:%.c=%.o)
+obj-m := study.o
+study-objs := $(CFILES:%.c=%.o)
 
 all:
 	$(MAKE) modules
