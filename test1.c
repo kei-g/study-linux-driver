@@ -2,7 +2,7 @@
 
 static int test_init(void)
 {
-	printk("\x1b[33mtest\x1b[m: %s: Hello World!!\n", __FILE__);
+	printk("\x1b[33mtest\x1b[m: Hello World!!\n");
 	return 0;
 }
 
