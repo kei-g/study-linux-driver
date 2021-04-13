@@ -2,13 +2,13 @@
 
 static int test_init(void)
 {
-	printk("Hello World!!\n");
+	printk("\x1b[33mtest\x1b[m: Hello World!!\n");
 	return 0;
 }
 
 static void test_exit(void)
 {
-	printk("Bye World!!\n");
+	printk("\x1b[33mtest\x1b[m: Bye World!!\n");
 }
 
 module_init(test_init);
