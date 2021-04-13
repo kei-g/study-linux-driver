@@ -9,7 +9,7 @@ obj-m := study.o
 study-objs := $(CFILES:%.c=%.o)
 
 all:
-	$(MAKE) modules
+	+$(MAKE) modules
 
 clean:
 	$(MAKE) clean
