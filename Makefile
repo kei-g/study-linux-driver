@@ -3,7 +3,8 @@ CFILES := test1.c test2.c
 CUR_DIR := $(shell pwd)
 MAKE := make -C $(BUILD_DIR) M=$(CUR_DIR)
 
-ccflags-y += -Ofast -Wall -Werror -march=native -std=gnu2x
+ccflags-y += -Ofast -Wall -Werror -Wno-declaration-after-statement
+ccflags-y += -march=native -std=gnu2x
 obj-m := test.o
 test-objs := $(CFILES:%.c=%.o)
 
