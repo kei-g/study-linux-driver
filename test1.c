@@ -1,4 +1,5 @@
-#include <linux/cdev.h>
+#include "test.h"
+
 #include <linux/fs.h>
 #include <linux/module.h>
 #include <linux/slab.h>
@@ -43,13 +44,45 @@ struct file_operations fops = {
 	.write = test_write,
 };
 
-#define DRIVER_MAJOR 63
+struct cdev testdevice_cdev;
+struct class *testdevice_class;
+int testdevice_major;
+
 #define DRIVER_NAME "test"
 
 static int test_init(void)
 {
 	printk("\x1b[33mtest\x1b[m: Hello World!!\n");
-	register_chrdev(DRIVER_MAJOR, DRIVER_NAME, &fops);
+	dev_t dev;
+	int err = alloc_chrdev_region(&dev, MINOR_BASE, MINOR_NUM, DRIVER_NAME);
+	if (err) {
+		printk(KERN_ERR "\x1b[31mtest\x1b[m: alloc_chrdev_region failed, %d\n", err);
+		return -1;
+	}
+	testdevice_major = MAJOR(dev);
+	dev = MKDEV(testdevice_major, MINOR_BASE);
+	cdev_init(&testdevice_cdev, &fops);
+	testdevice_cdev.owner = THIS_MODULE;
+	err = cdev_add(&testdevice_cdev, dev, MINOR_NUM);
+	if (err) {
+		printk(KERN_ERR "\x1b[31mtest\x1b[m: cdev_add failed, %d\n", err);
+		unregister_chrdev_region(dev, MINOR_NUM);
+		return -1;
+	}
+
+	testdevice_class = class_create(THIS_MODULE, "test");
+	if (IS_ERR(testdevice_class)) {
+		printk(KERN_ERR "\x1b[31mtest\x1b[m: failed to class_create\n");
+		cdev_del(&testdevice_cdev);
+		unregister_chrdev_region(dev, MINOR_NUM);
+		return -1;
+	}
+
+	for (int i = 0; i < MINOR_NUM; i++) {
+		dev = MKDEV(testdevice_major, MINOR_BASE + i);
+		device_create(testdevice_class, NULL, dev, NULL, "test%d", MINOR_BASE + i);
+	}
+
 	return 0;
 }
 
