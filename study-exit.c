@@ -15,7 +15,7 @@ static void study_exit(void)
 	cdev_del(&study_cdev);
 	unregister_chrdev_region(dev, MINOR_NUM);
 
-	printk("\x1b[33m%s\x1b[m: Bye World!!\n", DRIVER_NAME);
+	printk(KERN_INFO DRIVER_NAME ": Bye World!!\n");
 }
 
 module_exit(study_exit);
