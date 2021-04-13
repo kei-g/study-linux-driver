@@ -1,5 +1,5 @@
 BUILD_DIR := /lib/modules/$(shell uname -r)/build
-CFILES := study-exit.c study-init.c
+CFILES := study-exit.c study-init.c study-main.c
 CUR_DIR := $(shell pwd)
 MAKE := make -C $(BUILD_DIR) M=$(CUR_DIR)
 

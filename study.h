@@ -12,4 +12,9 @@ extern struct cdev study_cdev;
 extern struct class *study_class;
 extern int study_major;
 
+int study_close(struct inode *inode, struct file *file);
+int study_open(struct inode *inode, struct file *file);
+ssize_t study_read(struct file *file, char __user *buf, size_t len, loff_t *pos);
+ssize_t study_write(struct file *file, const char __user *buf, size_t len, loff_t *pos);
+
 #endif /* __include_study_h__ */
