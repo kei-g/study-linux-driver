@@ -13,6 +13,7 @@ extern struct class *study_class;
 extern int study_major;
 
 int study_close(struct inode *inode, struct file *file);
+long study_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
 int study_open(struct inode *inode, struct file *file);
 ssize_t study_read(struct file *file, char __user *buf, size_t len, loff_t *pos);
 ssize_t study_write(struct file *file, const char __user *buf, size_t len, loff_t *pos);

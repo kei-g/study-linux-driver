@@ -4,9 +4,11 @@
 #include <linux/module.h>
 
 struct file_operations fops = {
+	.compat_ioctl = study_ioctl,
 	.open = study_open,
 	.read = study_read,
 	.release = study_close,
+	.unlocked_ioctl = study_ioctl,
 	.write = study_write,
 };
 
