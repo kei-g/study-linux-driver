@@ -16,6 +16,15 @@ all: $(TARGET_BINARY)
 clean:
 	$(MAKE) clean
 
+disasm: $(TARGET_BINARY)
+	llvm-objdump --disassemble-all $(TARGET_BINARY) | less
+
+nm: $(TARGET_BINARY)
+	nm -gP $(TARGET_BINARY) | less
+
+readelf: $(TARGET_BINARY)
+	readelf --all $(TARGET_BINARY) | less
+
 rules:
 	echo 'KERNEL=="study[0-9]*", GROUP="root", MODE="0666"' > $(RULES_DIR)/21-study.rules
 
@@ -25,7 +34,7 @@ test: $(TARGET_BINARY)
 	echo -n say hello > /dev/study0
 	rmmod $(TARGET_BINARY)
 
-.PHONY: all clean rules test
+.PHONY: all clean disasm nm readelf rules test
 
 $(TARGET_BINARY):
 	+$(MAKE) modules && $(STRIP) $@
