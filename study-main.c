@@ -48,7 +48,8 @@ ssize_t study_write(struct file *file, const char __user *buf, size_t len, loff_
 	printk(KERN_INFO DRIVER_NAME ": allocating %zu bytes\n", len + 1);
 	char *p = kmalloc(len + 1, GFP_KERNEL);
 	printk(KERN_INFO DRIVER_NAME ": allocated in %p\n", p);
-	raw_copy_from_user(p, buf, len);
+	if (raw_copy_from_user(p, buf, len))
+		return -EFAULT;
 	p[len] = '\0';
 	printk(KERN_INFO DRIVER_NAME ": write(%s)\n", p);
 	kfree(p);
