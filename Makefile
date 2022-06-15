@@ -26,13 +26,13 @@ readelf: $(TARGET_BINARY)
 	readelf --all $(TARGET_BINARY) | less
 
 rules:
-	echo 'KERNEL=="study[0-9]*", GROUP="root", MODE="0666"' > $(RULES_DIR)/21-study.rules
+	echo 'KERNEL=="study[0-9]*", GROUP="root", MODE="0666"' | sudo tee $(RULES_DIR)/21-study.rules > /dev/null
 
 test: $(TARGET_BINARY)
-	insmod $(TARGET_BINARY)
-	cat /dev/study0
+	sudo insmod $(TARGET_BINARY)
+	sudo cat /dev/study0
 	echo -n say hello > /dev/study0
-	rmmod $(TARGET_BINARY)
+	sudo rmmod $(TARGET_BINARY)
 
 .PHONY: all clean disasm nm readelf rules test
 
