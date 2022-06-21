@@ -8,6 +8,7 @@ struct file_operations fops = {
   .compat_ioctl = study_ioctl,
   .open = study_open,
   .owner = THIS_MODULE,
+  .poll = study_poll,
   .read = study_read,
   .release = study_close,
   .unlocked_ioctl = study_ioctl,

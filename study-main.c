@@ -46,6 +46,15 @@ int study_open(struct inode *inode, struct file *file) {
   return 0;
 }
 
+unsigned int study_poll(struct file *file, poll_table *pt) {
+  study_file_t *fp = file->private_data;
+  unsigned int mask = POLLIN | POLLRDNORM;
+  mask |= POLLOUT | POLLWRNORM;
+  if (sizeof(fp->text) <= fp->cur)
+    mask |= POLLHUP;
+  return mask;
+}
+
 ssize_t study_read(struct file *file, char __user *buf, size_t len, loff_t *pos) {
   printk(KERN_INFO DRIVER_NAME ": read is called, len=%zu, pos=%lld\n", len, *pos);
   study_file_t *fp = file->private_data;

@@ -2,6 +2,7 @@
 #define __include_study_h__
 
 #include <linux/cdev.h>
+#include <linux/poll.h>
 #include <linux/semaphore.h>
 
 #define DRIVER_NAME "study"
@@ -17,6 +18,7 @@ extern study_device_t *dev;
 int study_close(struct inode *inode, struct file *file);
 long study_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
 int study_open(struct inode *inode, struct file *file);
+unsigned int study_poll(struct file *file, poll_table *pt);
 ssize_t study_read(struct file *file, char __user *buf, size_t len, loff_t *pos);
 ssize_t study_write(struct file *file, const char __user *buf, size_t len, loff_t *pos);
 
