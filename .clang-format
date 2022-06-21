@@ -39,7 +39,7 @@ BraceWrapping:
   AfterStruct: false
   AfterUnion: false
   BeforeCatch: false
-  BeforeElse: false
+  BeforeElse: true
   BeforeLambdaBody: false
   BeforeWhile: false
   IndentBraces: false
@@ -48,7 +48,7 @@ BraceWrapping:
   SplitEmptyRecord: true
 BreakAfterJavaFieldAnnotations: false
 BreakBeforeBinaryOperators: None
-BreakBeforeBraces: Attach
+BreakBeforeBraces: Custom
 BreakBeforeConceptDeclarations: true
 BreakBeforeInheritanceComma: false
 BreakBeforeTernaryOperators: true
