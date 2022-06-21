@@ -56,8 +56,9 @@ unsigned int study_poll(struct file *file, poll_table *pt) {
 }
 
 ssize_t study_read(struct file *file, char __user *buf, size_t len, loff_t *pos) {
-  printk(KERN_INFO DRIVER_NAME ": read is called, len=%zu, pos=%lld\n", len, *pos);
   study_file_t *fp = file->private_data;
+  printk(KERN_INFO DRIVER_NAME ": read is called, len=%zu, pos=%lld, file->cur=%lld\n",
+         len, *pos, fp->cur);
   ssize_t rlen = sizeof(fp->text) - fp->cur;
   if (len < rlen)
     rlen = len;
