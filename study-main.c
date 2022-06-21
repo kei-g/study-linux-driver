@@ -4,13 +4,23 @@
 
 #include "study.h"
 
-typedef struct {
-  loff_t cur;
-  char text[6];
-} study_t;
-
 int study_close(struct inode *inode, struct file *file) {
-  kfree(file->private_data);
+  study_device_t *dev = container_of(inode->i_cdev, study_device_t, _cdev);
+  if (down_interruptible(&dev->sem))
+    return -ERESTARTSYS;
+  study_file_t *fp = file->private_data;
+  if (fp == dev->head)
+    dev->head = fp->next;
+  else
+    for (study_file_t *node = dev->head; node->next; node = node->next)
+      if (node->next == fp) {
+        node->next = fp->next;
+        break;
+      }
+  if (!dev->head)
+    dev->tail = &dev->head;
+  up(&dev->sem);
+  kfree(fp);
   return 0;
 }
 
@@ -19,22 +29,32 @@ long study_ioctl(struct file *file, unsigned int cmd, unsigned long arg) {
 }
 
 int study_open(struct inode *inode, struct file *file) {
-  study_t *s = kmalloc(sizeof(*s), GFP_KERNEL);
-  s->cur = 0;
-  strcpy(s->text, "test\n");
-  file->private_data = s;
+  study_file_t *fp = kmalloc(sizeof(*fp), GFP_KERNEL);
+  fp->cur = 0;
+  fp->next = NULL;
+  strcpy(fp->text, "test\n");
+  file->private_data = fp;
+  study_device_t *dev = container_of(inode->i_cdev, study_device_t, _cdev);
+  if (down_interruptible(&dev->sem)) {
+    file->private_data = NULL;
+    kfree(fp);
+    return -ERESTARTSYS;
+  }
+  *dev->tail = fp;
+  dev->tail = &fp->next;
+  up(&dev->sem);
   return 0;
 }
 
 ssize_t study_read(struct file *file, char __user *buf, size_t len, loff_t *pos) {
   printk(KERN_INFO DRIVER_NAME ": read is called, len=%zu, pos=%lld\n", len, *pos);
-  study_t *s = file->private_data;
-  ssize_t rlen = sizeof(s->text) - s->cur;
+  study_file_t *fp = file->private_data;
+  ssize_t rlen = sizeof(fp->text) - fp->cur;
   if (len < rlen)
     rlen = len;
-  if (raw_copy_to_user(buf, s->text + s->cur, rlen))
+  if (raw_copy_to_user(buf, fp->text + fp->cur, rlen))
     return -EFAULT;
-  s->cur += rlen;
+  fp->cur += rlen;
   return rlen;
 }
 
